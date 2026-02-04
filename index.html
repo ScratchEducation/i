@@ -3,149 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Research Archive .ORG</title>
+    <title>Scratch Educational Portal</title>
     <style>
-        :root { --win-bg: #111; --header-bg: #222; }
-        
         body, html { margin: 0; padding: 0; height: 100vh; font-family: sans-serif; overflow: hidden; background: #000; }
-
-        /* --- STEALTH LOGIN --- */
-        #login-screen {
-            position: fixed; inset: 0; background: #fff; display: flex; 
-            align-items: center; justify-content: center; z-index: 10000;
+        
+        /* STEALTH LOGIN */
+        #login { position: fixed; inset: 0; background: #fff; z-index: 999; display: flex; align-items: center; justify-content: center; }
+        .box { text-align: center; width: 85%; max-width: 320px; }
+        input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; margin: 10px 0; box-sizing: border-box; font-size: 16px; }
+        
+        /* FULL SCREEN WINDOWS */
+        .win { 
+            position: absolute; 
+            inset: 0 0 70px 0; /* Fills screen above taskbar */
+            background: #000; display: none; flex-direction: column; z-index: 10;
         }
-        .login-box { width: 80%; max-width: 300px; text-align: center; }
-        .login-box input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .login-box button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .bar { 
+            background: #1a1a1a; padding: 8px 15px; display: flex; 
+            justify-content: space-between; align-items: center; color: #fff; 
+            border-bottom: 1px solid #333;
+        }
+        .close { background: #ff5f57; border: none; color: #fff; width: 30px; height: 30px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        
+        /* CONTENT STRETCH (No Borders) */
+        .content { flex-grow: 1; margin: 0; padding: 0; overflow: hidden; display: flex; }
+        iframe { width: 100%; height: 100%; border: none; flex-grow: 1; }
+        textarea { width: 100%; height: 100%; border: none; padding: 20px; font-size: 18px; outline: none; box-sizing: border-box; background: #fff; }
 
-        /* --- OS CONTENT --- */
+        /* DESKTOP BACKGROUND */
         #os-content {
             display: none; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
         }
 
-        .desktop { padding: 20px; display: flex; gap: 20px; }
-        .icon { text-align: center; color: white; cursor: pointer; width: 70px; }
-        .icon-img { font-size: 45px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-        .icon-label { font-size: 12px; font-weight: bold; margin-top: 5px; }
-
-        /* --- THE FIXED WINDOW --- */
-        .window {
-            position: absolute; 
-            top: 10px; left: 10px; right: 10px; bottom: 90px; /* HUGE windows */
-            background: #000; border-radius: 10px; display: none;
-            flex-direction: column; overflow: hidden; z-index: 10;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            border: 1px solid #444;
+        /* TASKBAR */
+        .taskbar { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+            background: rgba(0,0,0,0.9); display: flex; align-items: center; 
+            justify-content: center; gap: 35px; border-top: 1px solid #333; z-index: 100;
         }
-        
-        /* Thin Title Bar */
-        .title-bar { 
-            padding: 8px 15px; background: var(--header-bg); 
-            display: flex; justify-content: space-between; align-items: center; 
-            touch-action: none; color: white;
-        }
-        .title-text { font-size: 14px; font-weight: bold; }
-        .close-btn { 
-            background: #ff5f57; color: white; border: none; 
-            width: 25px; height: 25px; border-radius: 5px; cursor: pointer;
-        }
-
-        /* ZERO PADDING CONTENT */
-        .content { flex-grow: 1; background: #000; margin: 0; padding: 0; display: flex; }
-        iframe { width: 100%; height: 100%; border: none; display: block; }
-        textarea { width: 100%; height: 100%; border: none; padding: 20px; font-size: 18px; background: #fff; box-sizing: border-box; }
-
-        /* --- TASKBAR --- */
-        .taskbar {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            height: 60px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-            display: flex; align-items: center; gap: 20px; padding: 0 25px; border-radius: 15px;
-        }
-        .tb-icon { font-size: 35px; cursor: pointer; }
+        .btn { font-size: 38px; cursor: pointer; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <h2>System Login</h2>
-            <input type="password" id="passInput" placeholder="Password...">
-            <button onclick="unlock()">Login</button>
+    <div id="login">
+        <div class="box">
+            <h2 style="color:#222">District Learning Hub</h2>
+            <p style="color:#666; font-size: 12px;">Sign in with Student ID</p>
+            <input type="password" id="pw" placeholder="Enter ID Number...">
+            <button onclick="unlock()" style="width:100%; padding:15px; background:#1a73e8; color:#fff; border:none; border-radius:10px; font-weight:bold;">SIGN IN</button>
         </div>
     </div>
 
     <div id="os-content">
-        <div class="desktop">
-            <div class="icon" onclick="openApp('mc')"><div class="icon-img">⛏️</div><div class="icon-label">Minecraft</div></div>
-            <div class="icon" onclick="openApp('notes')"><div class="icon-img">📝</div><div class="icon-label">Notes</div></div>
+        <div id="mc" class="win">
+            <div class="bar"><span>Creative Engine</span><button class="close" onclick="cls('mc')">×</button></div>
+            <div class="content"><iframe src="https://classic.minecraft.net/"></iframe></div>
         </div>
 
-        <div id="mc" class="window">
-            <div class="title-bar">
-                <span class="title-text">Minecraft</span>
-                <button class="close-btn" onclick="closeApp('mc')">×</button>
-            </div>
-            <div class="content">
-                <iframe src="https://classic.minecraft.net/"></iframe>
-            </div>
+        <div id="gd" class="win">
+            <div class="bar"><span>Logic Physics Test</span><button class="close" onclick="cls('gd')">×</button></div>
+            <div class="content"><iframe src="https://geometrylitepc.io"></iframe></div>
         </div>
 
-        <div id="notes" class="window">
-            <div class="title-bar">
-                <span class="title-text">Notes</span>
-                <button class="close-btn" onclick="closeApp('notes')">×</button>
-            </div>
-            <div class="content"><textarea></textarea></div>
+        <div id="notes" class="win">
+            <div class="bar"><span>Research Notes</span><button class="close" onclick="cls('notes')">×</button></div>
+            <div class="content"><textarea placeholder="Log your findings..."></textarea></div>
         </div>
 
         <div class="taskbar">
-            <div class="tb-icon" onclick="openApp('mc')">⛏️</div>
-            <div class="tb-icon" onclick="openApp('notes')">📝</div>
-            <div class="tb-icon" onclick="location.reload()">🔒</div>
+            <div class="btn" onclick="opn('mc')" title="Minecraft">⛏️</div>
+            <div class="btn" onclick="opn('gd')" title="Geometry Dash">🔥</div>
+            <div class="btn" onclick="opn('notes')" title="Notes">📝</div>
+            <div class="btn" onclick="location.reload()" title="Lock Screen">🔒</div>
         </div>
     </div>
 
     <script>
-        function unlock() {
-            if(document.getElementById('passInput').value === "admin") {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('os-content').style.display = 'block';
+        function unlock() { 
+            if(document.getElementById('pw').value === 'admin') {
+                document.getElementById('login').style.display='none';
+                document.getElementById('os-content').style.display='block';
+            } else {
+                alert("Incorrect Student ID");
             }
         }
 
-        function openApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            document.getElementById(id).style.zIndex = Date.now();
+        function opn(id) { 
+            // Close others so the screen doesn't get messy
+            document.querySelectorAll('.win').forEach(w => w.style.display = 'none'); 
+            document.getElementById(id).style.display='flex'; 
         }
 
-        function closeApp(id) { document.getElementById(id).style.display = 'none'; }
-
-        // Dragging Logic
-        document.querySelectorAll('.window').forEach(win => {
-            const bar = win.querySelector('.title-bar');
-            let isDrg = false, sx, sy, ix, iy;
-            const start = (e) => {
-                isDrg = true;
-                const t = e.touches ? e.touches[0] : e;
-                sx = t.clientX; sy = t.clientY;
-                ix = win.offsetLeft; iy = win.offsetTop;
-                win.style.zIndex = Date.now();
-            };
-            const move = (e) => {
-                if(!isDrg) return;
-                const t = e.touches ? e.touches[0] : e;
-                win.style.left = (ix + (t.clientX - sx)) + 'px';
-                win.style.top = (iy + (t.clientY - sy)) + 'px';
-                win.style.right = 'auto'; win.style.bottom = 'auto';
-            };
-            bar.addEventListener('mousedown', start);
-            bar.addEventListener('touchstart', start);
-            document.addEventListener('mousemove', move);
-            document.addEventListener('touchmove', move, {passive: false});
-            document.addEventListener('mouseup', () => isDrg = false);
-            document.addEventListener('touchend', () => isDrg = false);
-        });
+        function cls(id) { 
+            document.getElementById(id).style.display='none'; 
+        }
     </script>
 </body>
 </html>
