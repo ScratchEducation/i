@@ -51,19 +51,15 @@
         .tb-icon:active { transform: scale(0.8); }
     </style>
 </head>
-<body onclick="initAudio()">
+<body>
 
     <div id="login-screen">
         <div class="login-box">
             <h1>PORTAL</h1>
-            <input type="password" id="passInput" placeholder="PIN..." onfocus="initAudio()">
+            <input type="password" id="passInput" placeholder="PIN...">
             <button onclick="unlock()">ENTER</button>
         </div>
     </div>
-
-    <audio id="bg-music" loop preload="auto">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
-    </audio>
 
     <div id="os-content">
         <div id="mc" class="window"><div class="title-bar"><span>Creative Engine</span><button class="close-btn" onclick="cls('mc')">×</button></div><div class="content"><iframe src="https://classic.minecraft.net/"></iframe></div></div>
@@ -73,55 +69,32 @@
         <div id="notes" class="window" style="width:350px;"><div class="title-bar"><span>Notes</span><button class="close-btn" onclick="cls('notes')">×</button></div><div class="content" style="background:white;"><textarea style="width:100%; height:100%; border:none; padding:20px; outline:none; font-size:16px;"></textarea></div></div>
 
         <div class="taskbar">
-            <div class="tb-icon" onclick="opn('mc')">⛏️</div>
-            <div class="tb-icon" onclick="opn('gd')">🔥</div>
-            <div class="tb-icon" onclick="opn('notes')">📝</div>
-            <div class="tb-icon" onclick="toggleMusic()" id="m-icon">🔇</div>
-            <div class="tb-icon" onclick="location.reload()">🔒</div>
+            <div class="tb-icon" onclick="opn('mc')" title="Minecraft">⛏️</div>
+            <div class="tb-icon" onclick="opn('gd')" title="Games">🔥</div>
+            <div class="tb-icon" onclick="opn('notes')" title="Notes">📝</div>
+            <div class="tb-icon" onclick="location.reload()" title="Lock">🔒</div>
         </div>
     </div>
 
     <script>
-        const music = document.getElementById('bg-music');
-        let audioStarted = false;
-
-        // Helps the browser (especially iPad) "warm up" the audio
-        function initAudio() {
-            if (!audioStarted) {
-                music.play().then(() => {
-                    music.pause();
-                    audioStarted = true;
-                }).catch(e => console.log("Waiting for interaction..."));
-            }
-        }
-
         function unlock() {
             if(document.getElementById('passInput').value === "admin") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('os-content').style.display = 'block';
-                
-                // Volume set to 40% (0.4) so it is chill
-                music.volume = 0.4;
-                music.play().then(() => {
-                    document.getElementById('m-icon').innerText = '🎵';
-                }).catch(e => {
-                    document.getElementById('m-icon').innerText = '🔇';
-                });
+            } else {
+                alert("Access Denied");
             }
         }
 
-        function toggleMusic() {
-            if (music.paused) { 
-                music.play(); 
-                document.getElementById('m-icon').innerText = '🎵'; 
-            } else { 
-                music.pause(); 
-                document.getElementById('m-icon').innerText = '🔇'; 
-            }
+        function opn(id) { 
+            const el = document.getElementById(id); 
+            el.style.display = 'flex'; 
+            el.style.zIndex = Date.now(); 
         }
-
-        function opn(id) { const el = document.getElementById(id); el.style.display = 'flex'; el.style.zIndex = Date.now(); }
-        function cls(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function cls(id) { 
+            document.getElementById(id).style.display = 'none'; 
+        }
 
         // Window Dragging Logic
         function makeDraggable(el, handle) {
@@ -145,7 +118,7 @@
             document.addEventListener('touchmove', move, {passive:false});
             document.addEventListener('mouseup', () => drg = false); 
             document.addEventListener('touchend', () => drg = false);
-        } 
+        }
         document.querySelectorAll('.window').forEach(w => makeDraggable(w, w.querySelector('.title-bar')));
     </script>
 </body>
